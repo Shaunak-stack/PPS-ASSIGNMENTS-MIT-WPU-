@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_ATTEMPTS 3
+#define MAX_LEN 100
+
+int main(void) {
+    char stored_email[MAX_LEN] = "user@gmail.com";
+    char stored_password[MAX_LEN] = "S3cr3tP@ss!";
+    char input_email[MAX_LEN];
+    char input_password[MAX_LEN];
+    int attempts = 0;
+    int authenticated = 0;
+
+    printf("=== Gmail Login Simulation ===\n");
+
+    while (attempts < MAX_ATTEMPTS) {
+        printf("\nEnter Gmail address: ");
+        if (scanf("%99s", input_email) != 1) {
+            return 1;
+        }
+
+        if (strcmp(input_email, stored_email) != 0) {
+            printf("Error: Couldn't find your Google Account.\n");
+            attempts++;
+            printf("Attempts remaining: %d\n", MAX_ATTEMPTS - attempts);
+            continue;
+        }
+
+        printf("Enter password: ");
+        if (scanf("%99s", input_password) != 1) {
+            return 1;
+        }
+
+        if (strcmp(input_password, stored_password) == 0) {
+            authenticated = 1;
+            break;
+        } else {
+            attempts++;
+            printf("Wrong password. Try again.\n");
+            printf("Attempts remaining: %d\n", MAX_ATTEMPTS - attempts);
+        }
+    }
+
+    if (!authenticated) {
+        printf("\nAccount temporarily locked due to too many failed attempts.\n");
+        return 0;
+    }
+
+    /* Simulated 2-Step Verification (OTP) */
+    srand((unsigned int)time(NULL));
+    int otp = 100000 + (rand() % 900000);
+    int entered_otp = 0;
+
+    printf("\n2-Step Verification: A 6-digit code was sent (%d).\n", otp);
+    printf("Enter 6-digit verification code: ");
+    if (scanf("%d", &entered_otp) != 1) {
+        return 1;
+    }
+
+    if (entered_otp == otp) {
+        printf("\nLogin successful! Welcome to Gmail (%s).\n", stored_email);
+    } else {
+        printf("\nVerification failed. Access denied.\n");
+    }
+
+    return 0;
+}
