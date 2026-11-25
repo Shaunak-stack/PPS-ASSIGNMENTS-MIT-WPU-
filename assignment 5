@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 200
+
+void readLine(char *buf, size_t size) {
+    if (fgets(buf, (int)size, stdin) != NULL) {
+        buf[strcspn(buf, "\n")] = '\0';
+    }
+}
+
+void toLowerStr(char *s) {
+    for (size_t i = 0; s[i] != '\0'; i++) {
+        s[i] = (char)tolower((unsigned char)s[i]);
+    }
+}
+
+void toUpperStr(char *s) {
+    for (size_t i = 0; s[i] != '\0'; i++) {
+        s[i] = (char)toupper((unsigned char)s[i]);
+    }
+}
+
+void reverseStr(char *s) {
+    size_t len = strlen(s);
+    for (size_t i = 0; i < len / 2; i++) {
+        char tmp = s[i];
+        s[i] = s[len - 1 - i];
+        s[len - 1 - i] = tmp;
+    }
+}
+
+int isPalindrome(const char *s) {
+    size_t len = strlen(s);
+    for (size_t i = 0; i < len / 2; i++) {
+        if (s[i] != s[len - 1 - i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    char s1[MAX] = "Hello";
+    char s2[MAX] = "World";
+    char work[MAX * 2];
+    int choice;
+
+    do {
+        printf("\n=== String Operations Menu ===\n");
+        printf("Current s1: \"%s\" | s2: \"%s\"\n", s1, s2);
+        printf("1. Input new strings (s1 and s2)\n");
+        printf("2. String length (strlen)\n");
+        printf("3. Copy s2 into s1 (strcpy)\n");
+        printf("4. Concatenate s2 onto s1 (strcat)\n");
+        printf("5. Compare s1 and s2 (strcmp)\n");
+        printf("6. Find substring s2 in s1 (strstr)\n");
+        printf("7. Convert s1 to lowercase / uppercase\n");
+        printf("8. Reverse s1 and check palindrome\n");
+        printf("9. Exit\n");
+        printf("Enter choice (1-9): ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+        while (getchar() != '\n'); /* Consume trailing newline */
+
+        switch (choice) {
+            case 1:
+                printf("Enter string s1: ");
+                readLine(s1, sizeof(s1));
+                printf("Enter string s2: ");
+                readLine(s2, sizeof(s2));
+                break;
+
+            case 2:
+                printf("Length of s1: %zu\n", strlen(s1));
+                printf("Length of s2: %zu\n", strlen(s2));
+                break;
+
+            case 3:
+                strncpy(s1, s2, MAX - 1);
+                s1[MAX - 1] = '\0';
+                printf("Copied s2 into s1 -> s1 is now \"%s\"\n", s1);
+                break;
+
+            case 4:
+                snprintf(work, sizeof(work), "%s%s", s1, s2);
+                strncpy(s1, work, MAX - 1);
+                s1[MAX - 1] = '\0';
+                printf("Concatenated -> s1 is now \"%s\"\n", s1);
+                break;
+
+            case 5: {
+                int cmp = strcmp(s1, s2);
+                if (cmp == 0) {
+                    printf("Strings are equal.\n");
+                } else if (cmp < 0) {
+                    printf("\"%s\" comes before \"%s\" lexicographically (%d).\n", s1, s2, cmp);
+                } else {
+                    printf("\"%s\" comes after \"%s\" lexicographically (%d).\n", s1, s2, cmp);
+                }
+                break;
+            }
+
+            case 6: {
+                char *pos = strstr(s1, s2);
+                if (pos != NULL) {
+                    printf("Substring \"%s\" found at index %td.\n", s2, pos - s1);
+                } else {
+                    printf("Substring \"%s\" not found in \"%s\".\n", s2, s1);
+                }
+                break;
+            }
+
+            case 7: {
+                int subChoice;
+                printf("1. Lowercase  2. Uppercase: ");
+                if (scanf("%d", &subChoice) == 1) {
+                    while (getchar() != '\n');
+                    strncpy(work, s1, sizeof(work) - 1);
+                    work[sizeof(work) - 1] = '\0';
+                    if (subChoice == 1) {
+                        toLowerStr(work);
+                        printf("Lowercase: \"%s\"\n", work);
+                    } else if (subChoice == 2) {
+                        toUpperStr(work);
+                        printf("Uppercase: \"%s\"\n", work);
+                    } else {
+                        printf("Invalid option.\n");
+                    }
+                } else {
+                    while (getchar() != '\n');
+                }
+                break;
+            }
+
+            case 8:
+                printf("s1 is %sa exact palindrome.\n", isPalindrome(s1) ? "" : "not ");
+                strncpy(work, s1, sizeof(work) - 1);
+                work[sizeof(work) - 1] = '\0';
+                reverseStr(work);
+                printf("Reversed s1: \"%s\"\n", work);
+                break;
+
+            case 9:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Select between 1 and 9.\n");
+                break;
+        }
+    } while (choice != 9);
+
+    return 0;
+}
