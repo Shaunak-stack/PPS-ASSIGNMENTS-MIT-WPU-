@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+/* Iterative factorial (without recursion) */
+unsigned long long factorial_iterative(int n) {
+    unsigned long long result = 1ULL;
+    for (int i = 2; i <= n; i++) {
+        result *= (unsigned long long)i;
+    }
+    return result;
+}
+
+/* Recursive factorial (with recursion) */
+unsigned long long factorial_recursive(int n) {
+    if (n <= 1) {
+        return 1ULL; /* Base case: 0! = 1 and 1! = 1 */
+    }
+    return (unsigned long long)n * factorial_recursive(n - 1);
+}
+
+int main(void) {
+    int n;
+
+    printf("Enter a non-negative integer (0 to 20): ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        printf("Invalid input. Enter a non-negative integer.\n");
+        return 1;
+    }
+
+    if (n > 20) {
+        printf("Warning: %d! exceeds unsigned long long (64-bit) max of 20!.\n", n);
+        return 1;
+    }
+
+    printf("Iterative (%d!) = %llu\n", n, factorial_iterative(n));
+    printf("Recursive (%d!) = %llu\n", n, factorial_recursive(n));
+
+    return 0;
+}
